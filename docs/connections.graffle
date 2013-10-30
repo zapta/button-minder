@@ -46,14 +46,89 @@
 	<key>Creator</key>
 	<string>Tal Dayan</string>
 	<key>DisplayScale</key>
-	<string>1 0/72 in = 1 0/72 in</string>
+	<string>1 0/72 in = 1.0000 in</string>
 	<key>GraphDocumentVersion</key>
 	<integer>8</integer>
 	<key>GraphicsList</key>
 	<array>
 		<dict>
+			<key>Class</key>
+			<string>LineGraphic</string>
+			<key>ID</key>
+			<integer>171</integer>
+			<key>Points</key>
+			<array>
+				<string>{406, 454.75}</string>
+				<string>{433, 455}</string>
+			</array>
+			<key>Style</key>
+			<dict>
+				<key>stroke</key>
+				<dict>
+					<key>HeadArrow</key>
+					<string>0</string>
+					<key>Legacy</key>
+					<true/>
+					<key>Pattern</key>
+					<integer>1</integer>
+					<key>TailArrow</key>
+					<string>0</string>
+				</dict>
+			</dict>
+		</dict>
+		<dict>
+			<key>Class</key>
+			<string>LineGraphic</string>
+			<key>ID</key>
+			<integer>170</integer>
+			<key>Points</key>
+			<array>
+				<string>{405.75, 377}</string>
+				<string>{432.75, 377.25}</string>
+			</array>
+			<key>Style</key>
+			<dict>
+				<key>stroke</key>
+				<dict>
+					<key>HeadArrow</key>
+					<string>0</string>
+					<key>Legacy</key>
+					<true/>
+					<key>Pattern</key>
+					<integer>1</integer>
+					<key>TailArrow</key>
+					<string>0</string>
+				</dict>
+			</dict>
+		</dict>
+		<dict>
+			<key>Class</key>
+			<string>LineGraphic</string>
+			<key>ID</key>
+			<integer>169</integer>
+			<key>Points</key>
+			<array>
+				<string>{407, 300.75}</string>
+				<string>{434, 301}</string>
+			</array>
+			<key>Style</key>
+			<dict>
+				<key>stroke</key>
+				<dict>
+					<key>HeadArrow</key>
+					<string>0</string>
+					<key>Legacy</key>
+					<true/>
+					<key>Pattern</key>
+					<integer>1</integer>
+					<key>TailArrow</key>
+					<string>0</string>
+				</dict>
+			</dict>
+		</dict>
+		<dict>
 			<key>Bounds</key>
-			<string>{{387, 325.25}, {47, 24}}</string>
+			<string>{{379, 325.25}, {47, 24}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FitText</key>
@@ -109,7 +184,7 @@ Resistor}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{387, 402.75}, {39, 24}}</string>
+			<string>{{379, 400.5}, {67, 36}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FitText</key>
@@ -156,7 +231,8 @@ Resistor}</string>
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
 \f0\fs20 \cf0 Target\
-Button}</string>
+Button\
+(Momentary)}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
@@ -226,7 +302,7 @@ Button}</string>
 			<key>Points</key>
 			<array>
 				<string>{361, 300.75}</string>
-				<string>{417.5, 301.75}</string>
+				<string>{407, 300.75}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -249,7 +325,7 @@ Button}</string>
 			<key>Points</key>
 			<array>
 				<string>{361, 454.75}</string>
-				<string>{417.5, 454.25}</string>
+				<string>{406, 454.75}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -272,7 +348,7 @@ Button}</string>
 			<key>Points</key>
 			<array>
 				<string>{360.5, 376.9375}</string>
-				<string>{417.5, 376.9375}</string>
+				<string>{406, 376.9375}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1046,76 +1122,67 @@ Button}</string>
 		</dict>
 		<dict>
 			<key>Class</key>
-			<string>Group</string>
-			<key>Graphics</key>
-			<array>
-				<dict>
-					<key>Class</key>
-					<string>LineGraphic</string>
-					<key>ID</key>
-					<integer>128</integer>
-					<key>Points</key>
-					<array>
-						<string>{359.51791270828062, 426.86214964294749}</string>
-						<string>{371.25, 406.75}</string>
-					</array>
-					<key>Style</key>
-					<dict>
-						<key>stroke</key>
-						<dict>
-							<key>HeadArrow</key>
-							<string>0</string>
-							<key>Legacy</key>
-							<true/>
-							<key>TailArrow</key>
-							<string>0</string>
-						</dict>
-					</dict>
-					<key>Tail</key>
-					<dict>
-						<key>ID</key>
-						<integer>129</integer>
-					</dict>
-				</dict>
-				<dict>
-					<key>Bounds</key>
-					<string>{{353.25, 426.75}, {8, 8}}</string>
-					<key>Class</key>
-					<string>ShapedGraphic</string>
-					<key>ID</key>
-					<integer>129</integer>
-					<key>Shape</key>
-					<string>Circle</string>
-					<key>Style</key>
-					<dict>
-						<key>shadow</key>
-						<dict>
-							<key>Draws</key>
-							<string>NO</string>
-						</dict>
-					</dict>
-				</dict>
-				<dict>
-					<key>Bounds</key>
-					<string>{{353.25, 402.75}, {8, 8}}</string>
-					<key>Class</key>
-					<string>ShapedGraphic</string>
-					<key>ID</key>
-					<integer>130</integer>
-					<key>Shape</key>
-					<string>Circle</string>
-					<key>Style</key>
-					<dict>
-						<key>shadow</key>
-						<dict>
-							<key>Draws</key>
-							<string>NO</string>
-						</dict>
-					</dict>
-				</dict>
-			</array>
+			<string>LineGraphic</string>
 			<key>ID</key>
-			<integer>127</integer>
+			<integer>128</integer>
+			<key>Points</key>
+			<array>
+				<string>{354.95208686506317, 426.87983050958007}</string>
+				<string>{343, 406.75}</string>
+			</array>
+			<key>Style</key>
+			<dict>
+				<key>stroke</key>
+				<dict>
+					<key>HeadArrow</key>
+					<string>0</string>
+					<key>Legacy</key>
+					<true/>
+					<key>TailArrow</key>
+					<string>0</string>
+				</dict>
+			</dict>
+			<key>Tail</key>
+			<dict>
+				<key>ID</key>
+				<integer>129</integer>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{353.25, 426.75}, {8, 8}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>ID</key>
+			<integer>129</integer>
+			<key>Shape</key>
+			<string>Circle</string>
+			<key>Style</key>
+			<dict>
+				<key>shadow</key>
+				<dict>
+					<key>Draws</key>
+					<string>NO</string>
+				</dict>
+			</dict>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{353.25, 402.75}, {8, 8}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>ID</key>
+			<integer>130</integer>
+			<key>Shape</key>
+			<string>Circle</string>
+			<key>Style</key>
+			<dict>
+				<key>shadow</key>
+				<dict>
+					<key>Draws</key>
+					<string>NO</string>
+				</dict>
+			</dict>
 		</dict>
 		<dict>
 			<key>Class</key>
@@ -1404,6 +1471,8 @@ Button}</string>
 			</array>
 		</dict>
 		<dict>
+			<key>AllowConnections</key>
+			<string>NO</string>
 			<key>Bounds</key>
 			<string>{{287.5, 221.25}, {192.5, 290.5}}</string>
 			<key>Class</key>
@@ -1461,7 +1530,7 @@ Button}</string>
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2013-10-30 16:08:06 +0000</string>
+	<string>2013-10-30 17:26:44 +0000</string>
 	<key>Modifier</key>
 	<string>Tal Dayan</string>
 	<key>NotesVisible</key>
@@ -1556,15 +1625,15 @@ Button}</string>
 		<key>SidebarWidth</key>
 		<integer>120</integer>
 		<key>VisibleRegion</key>
-		<string>{{-212, 0}, {1000, 603}}</string>
+		<string>{{37.5, 215.5}, {500, 301.5}}</string>
 		<key>Zoom</key>
-		<real>1</real>
+		<real>2</real>
 		<key>ZoomValues</key>
 		<array>
 			<array>
 				<string>Canvas 1</string>
-				<real>1</real>
 				<real>2</real>
+				<real>0.0</real>
 			</array>
 		</array>
 	</dict>
