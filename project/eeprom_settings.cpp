@@ -15,12 +15,12 @@
 
 // We use specific bit pattern when writing the true/false setting
 // to the eeprom to reduce the chance of false positive.
-#define EEPROM_TRUE  0x7b
-#define EEPROM_FALSE 0xf3
+static const int EEPROM_TRUE = 0x7b;
+static const int EEPROM_FALSE = 0xf3;
 
 // We write the setting flag in this address of the eeprom of the Digispark. This
 // is an arbitrary address.
-#define EEPROM_ADDRESS 0x0
+static const int EEPROM_ADDRESS = 0x0;
 
 boolean EepromSettings::read() {
   return EEPROM.read(EEPROM_ADDRESS) ==  EEPROM_TRUE;

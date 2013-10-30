@@ -18,10 +18,14 @@
 
 // A class for debouncing binary an input signal.
 class Debouncer {
+private:
+  // Default debounce time. Callers can override when calling reastart().
+  static const int DEFAULT_DEBOUNCE_TIME_MILLIS = 100;
+  
 public:
   Debouncer() {
     // Arbitrary default debounce time in millis.
-    restart(100);
+    restart(DEFAULT_DEBOUNCE_TIME_MILLIS);
   }
 
   // Reset but keep existing debounce time.

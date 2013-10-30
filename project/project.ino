@@ -46,39 +46,46 @@
 #include "passive_timer.h"
 
 // Digispark onboard LED. Used for diagnostics, active high.
-#define LED_PIN 1
+static const int LED_PIN = 1;
 
 // Pin P2 of the Digispark is used to sense (as andlog input) and to active (as 
 // digital output) the target button. Even though both functions uses the same pin,
 // analog and digital I/Os have different pin numberings.
-# define BUTTON_PIN_AS_DIGITAL 2
-# define BUTTON_PIN_AS_ANALOG 1
+static const int BUTTON_PIN_AS_DIGITAL = 2;
+static const int BUTTON_PIN_AS_ANALOG = 1;
 
 // Debouncing period in millis for the target button sensing input. We will 
 // consider the target button to be at a given state only after it is stable for 
 // this time period.
-#define BUTTON_DEBOUNCE_MILLIS 100
+static const int BUTTON_DEBOUNCE_MILLIS = 100;
 
 // The time in millis for determining a long target button press. This is the long
 // press that toggle the setting of this board.
-#define BUTTON_LONG_PRESS_MILLIS 5000
+static const int BUTTON_LONG_PRESS_MILLIS = 5000;
 
 // If the button debouncer cannot get a stable reading within this  time priod in 
 // milliseconds, the program enters the fatal error state and stays passive. 
 // Something must be wrong.
-#define BUTTON_DEBOUNCING_TIMEOUT 5000
+static const int BUTTON_DEBOUNCING_TIMEOUT = 5000;
+
+// The voltage in millivolt of the button sensing threshold. The 
+// buttons is considered to be pressed if the voltage on its 
+// pullup pole is less than this voltage.
+static const int BUTTON_THRESHOLD_MILLI_VOLTS = 1200;
+
+// Read the state of the target button. Requires that the button pin is in input
+// mode. Return true IFF target button is pressed. This is a pre debouncing value.
+boolean readButtonPin() {
+  // Full scale of 5000mv equals reading of 1023.
+  // Making the computation as long to avoid overflow.
+  const long theshold_counts =  (1023L * BUTTON_THRESHOLD_MILLI_VOLTS ) / 5000;
+  return analogRead(BUTTON_PIN_AS_ANALOG) < theshold_counts;
+}
 
 // The current led pattern. The actual led value is computed by ledPattern() based
 // on time_in_state and this pattern; The led pattern define the led on/off states
 // over 32 time slot of one second cycles. See led_pattern.h for more details.
 static unsigned long led_pattern;
-
-// Read the state of the target button. Requires that the button pin is in input
-// mode. Return true IFF target button is pressed. This is a pre debouncing value.
-boolean readButtonPin() {
-  // Full scale reading of 1023 represents 5V, so 200 is about 1V.
-  return analogRead(BUTTON_PIN_AS_ANALOG) < 200;
-}
 
 // The program is modeled as a finite state machine with these states.
 typedef enum {
@@ -212,7 +219,7 @@ void StatePressTargetButton::enter() {
 void StatePressTargetButton::handle() {
   const int t = time_in_state.time_millis();
 
-  // TODO: make these number #define consts.
+  // TODO: make these numbers consts.
   //
   // We simulate a 300ms button press, starting 600ms after 
   // entering this state to make it easier to notice it on
