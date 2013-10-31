@@ -21,21 +21,16 @@ class Debouncer {
 private:
   // Default debounce time. Callers can override when calling reastart().
   static const int DEFAULT_DEBOUNCE_TIME_MILLIS = 100;
-  
-public:
-  Debouncer() {
-    // Arbitrary default debounce time in millis.
-    restart(DEFAULT_DEBOUNCE_TIME_MILLIS);
-  }
 
-  // Reset but keep existing debounce time.
-  void reset() {
-    restart(debounce_time_millis_);
-  }
+public:
+  Debouncer(int debounce_time_millis) 
+: 
+    debounce_time_millis_(debounce_time_millis) {
+      restart();
+    }
 
   // Reset using a new debunce time. This resets hasStableValue() to false.
-  void restart(int debounce_time_millis) {
-    debounce_time_millis_ = debounce_time_millis;
+  void restart() {
     latest_value_ = false;
     time_in_latest_value_.restart();
     has_stable_value_ = false;
@@ -62,24 +57,24 @@ public:
   }
 
   // Test if the debouncer has a stable value. 
-  boolean hasStableValue() {
+  boolean hasStableValue() const {
     return has_stable_value_;
   }
 
   // Returns the debounced state. Active high. Valid only if hasStableValue()
   // is true.
-  boolean stableValue() {
+  boolean stableValue() const {
     return stable_value_;
   }
 
   // Return the time in millis of the current stable value. Valid only if
   // hasStableValue() is true.
-  int millisInStableValue() {
+  int millisInStableValue() const {
     return time_in_stable_value_.time_millis();
   }
 
 private:
-  int debounce_time_millis_;
+  const int debounce_time_millis_;
 
   // Tracks pre debouncing button stte.
   boolean latest_value_;
@@ -92,6 +87,7 @@ private:
 };
 
 #endif
+
 
 
 

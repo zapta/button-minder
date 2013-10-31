@@ -40,6 +40,7 @@
 // TODO: why do we need to include it here? It is included in eeprom_settings.cpp.
 #include <EEPROM.h>
 
+#include "io_button.h"
 #include "debouncer.h"
 #include "eeprom_settings.h"
 #include "led_pattern.h"
@@ -47,17 +48,6 @@
 
 // Digispark onboard LED. Used for diagnostics, active high.
 static const int LED_PIN = 1;
-
-// Pin P2 of the Digispark is used to sense (as andlog input) and to active (as 
-// digital output) the target button. Even though both functions uses the same pin,
-// analog and digital I/Os have different pin numberings.
-static const int BUTTON_PIN_AS_DIGITAL = 2;
-static const int BUTTON_PIN_AS_ANALOG = 1;
-
-// Debouncing period in millis for the target button sensing input. We will 
-// consider the target button to be at a given state only after it is stable for 
-// this time period.
-static const int BUTTON_DEBOUNCE_MILLIS = 100;
 
 // The time in millis for determining a long target button press. This is the long
 // press that toggle the setting of this board.
@@ -68,19 +58,8 @@ static const int BUTTON_LONG_PRESS_MILLIS = 5000;
 // Something must be wrong.
 static const int BUTTON_DEBOUNCING_TIMEOUT = 5000;
 
-// The voltage in millivolt of the button sensing threshold. The 
-// buttons is considered to be pressed if the voltage on its 
-// pullup pole is less than this voltage.
-static const int BUTTON_THRESHOLD_MILLI_VOLTS = 1200;
-
-// Read the state of the target button. Requires that the button pin is in input
-// mode. Return true IFF target button is pressed. This is a pre debouncing value.
-boolean readButtonPin() {
-  // Full scale of 5000mv equals reading of 1023.
-  // Making the computation as long to avoid overflow.
-  const long theshold_counts =  (1023L * BUTTON_THRESHOLD_MILLI_VOLTS ) / 5000;
-  return analogRead(BUTTON_PIN_AS_ANALOG) < theshold_counts;
-}
+// Pin P2 is pin 2 as digital and pin 1 as analog. Debounce time is 100 milliseconds.
+static IoButton io_button(2, 1, 100);
 
 // The current led pattern. The actual led value is computed by ledPattern() based
 // on time_in_state and this pattern; The led pattern define the led on/off states
@@ -126,7 +105,7 @@ struct StateIsLongPress {
   void enter();
   void handle();
 private:
-  Debouncer button_debouncer_;
+  //Debouncer button_debouncer_;
   // We set this to true if we detected a long press.
   boolean long_press_detected_;
 } 
@@ -153,20 +132,16 @@ state_fatal_error;
 // --- IS_LONG_PRESS state handler implementation
 
 void StateIsLongPress::enter() {
-  pinMode(BUTTON_PIN_AS_DIGITAL, INPUT); 
   enterState(STATE_IS_LONG_PRESS);
-  button_debouncer_.restart(BUTTON_DEBOUNCE_MILLIS); 
+  io_button.setModeInput();
   long_press_detected_ = false; 
 }
 
 void StateIsLongPress::handle() {
   const int t = time_in_state.time_millis();
 
-  // Read button state and update the debouncer.
-  button_debouncer_.update(readButtonPin());  
-
   // Handle the case were decouncing has not stabalized yet.
-  if (!button_debouncer_.hasStableValue()) {
+  if (!io_button.hasStableValue()) {
     if (t > BUTTON_DEBOUNCING_TIMEOUT) {
       state_fatal_error.enter();
       return;
@@ -179,7 +154,7 @@ void StateIsLongPress::handle() {
   // Here, the button tracker has a stable value. 
 
   // If the button is released then  then we can transition to the next state.
-  if (!button_debouncer_.stableValue()) {
+  if (!io_button.stableValue()) {
     if (EepromSettings::read()) {
       state_press_target_button.enter();
     } 
@@ -190,7 +165,7 @@ void StateIsLongPress::handle() {
   }
 
   // Here when the button is pressed, see if we just detected a long press.
-  if (button_debouncer_.millisInStableValue() >= BUTTON_LONG_PRESS_MILLIS && 
+  if (io_button.millisInStableValue() >= BUTTON_LONG_PRESS_MILLIS && 
     !long_press_detected_) {
     long_press_detected_ = true;
 
@@ -210,9 +185,8 @@ void StateIsLongPress::handle() {
 
 // ---  PRESS_TARGET_BUTTON state handler implementation 
 
-//struct PressTargetButton {
 void StatePressTargetButton::enter() {
-  pinMode(BUTTON_PIN_AS_DIGITAL, INPUT); 
+  io_button.setModeInput();
   enterState(STATE_PRESS_TARGET_BUTTON);
 }
 
@@ -225,15 +199,13 @@ void StatePressTargetButton::handle() {
   // entering this state to make it easier to notice it on
   // the diagnostics LED>
   if (t >= 600 && t <= 900) { 
-    // This 'presses' the target button. Repeating it over and over in
-    // handle() calls does no harm (verified the signal with an osciloscope).
-    pinMode(BUTTON_PIN_AS_DIGITAL, OUTPUT); 
-    digitalWrite(BUTTON_PIN_AS_DIGITAL, LOW);
+    // This 'presses' the target button.
+    io_button.setModeOutputLow();
     led_pattern = 0xffffffff;
   } 
   else {
     // Make the output passive.
-    pinMode(BUTTON_PIN_AS_DIGITAL, INPUT); 
+    io_button.setModeInput();
     led_pattern = 0x00000000;
   }
 
@@ -248,7 +220,7 @@ void StatePressTargetButton::handle() {
 
 //struct StateIdle {
 void StateIdle::enter() {
-  pinMode(BUTTON_PIN_AS_DIGITAL, INPUT); 
+  io_button.setModeInput();
   enterState(STATE_IDLE); 
   led_pattern = 0x00000001; 
 }
@@ -260,7 +232,7 @@ void StateIdle::handle() {
 // --- FATAL_ERROR state handler implementation
 
 void StateFatalError::enter() {
-  pinMode(BUTTON_PIN_AS_DIGITAL, INPUT); 
+  io_button.setModeInput();
   enterState(STATE_FATAL_ERROR);
   led_pattern = 0x00550055;
 }
@@ -273,11 +245,14 @@ void StateFatalError::handle() {
 void setup() { 
   pinMode(LED_PIN, OUTPUT); 
   digitalWrite(LED_PIN, LOW);
-  pinMode(BUTTON_PIN_AS_DIGITAL, INPUT); 
+  io_button.setModeInput();
   state_is_long_press.enter();
 }
 
 void loop() {
+  // If button is in input mode, read its state and update its debouncer.
+  io_button.updateDebouncer();
+
   // Update diagnostic based on pattern and time.
   digitalWrite(LED_PIN, 
   ledPattern(time_in_state.time_millis(), led_pattern) ? HIGH : LOW);
@@ -301,9 +276,4 @@ void loop() {
     break;
   }   
 }
-
-
-
-
-
 

@@ -22,18 +22,23 @@ public:
   PassiveTimer() {
     restart();
   }
+
   void restart() {
     start_time_millis_ = millis();
   }
+
   void copy(const PassiveTimer &other) {
     start_time_millis_ = other.start_time_millis_;
   }
-  long time_millis() {
+
+  long time_millis() const {
     return millis() - start_time_millis_;
-  }  
+  }
+
 private:
   long start_time_millis_;
 };
 
 #endif
+
 
