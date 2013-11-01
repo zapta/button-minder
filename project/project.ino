@@ -89,13 +89,13 @@ static State current_state;
 
 // The program is modeled as a finite state machine. This timer tracks the time in
 //  millis the program is in the current state.
-static PassiveTimer time_in_state;
+static PassiveTimer time_in_current_state;
 
 // Utility function to initialize a new state. 
 // TODO: why making the arg State instead of int does not compile?
 void enterState(int state) {
   current_state = (State) state;
-  time_in_state.restart(); 
+  time_in_current_state.restart(); 
   led_pattern = 0x00000000;
 }
 
@@ -138,7 +138,7 @@ void StateIsLongPress::enter() {
 }
 
 void StateIsLongPress::handle() {
-  const int t = time_in_state.time_millis();
+  const int t = time_in_current_state.time_millis();
 
   // Handle the case were decouncing has not stabalized yet.
   if (!io_button.hasStableValue()) {
@@ -191,7 +191,7 @@ void StatePressTargetButton::enter() {
 }
 
 void StatePressTargetButton::handle() {
-  const int t = time_in_state.time_millis();
+  const int t = time_in_current_state.time_millis();
 
   // TODO: make these numbers consts.
   //
@@ -251,7 +251,7 @@ void loop() {
   io_button.updateDebouncer();
 
   // Update diagnostic based on pattern and time in state.
-  diagnostics_led.setForPattern(time_in_state.time_millis(), led_pattern);
+  diagnostics_led.setForPattern(time_in_current_state.time_millis(), led_pattern);
 
   // Service current state.
   switch (current_state) {
