@@ -53,7 +53,7 @@
 	<array>
 		<dict>
 			<key>Bounds</key>
-			<string>{{434.50000403362662, 242.40505453993742}, {47, 12}}</string>
+			<string>{{447, 243.5}, {78, 24}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FitText</key>
@@ -68,7 +68,7 @@
 				<real>24</real>
 			</dict>
 			<key>ID</key>
-			<integer>200</integer>
+			<integer>202</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
@@ -99,7 +99,64 @@
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
-\f0\fs20 \cf0 Resistor}</string>
+\f0\fs20 \cf0 Pullup Resistor\
+~1K - 3K}</string>
+				<key>VerticalPad</key>
+				<integer>0</integer>
+			</dict>
+			<key>Wrap</key>
+			<string>NO</string>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{63, 331.65507507324219}, {61, 24}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>FitText</key>
+			<string>YES</string>
+			<key>Flow</key>
+			<string>Resize</string>
+			<key>FontInfo</key>
+			<dict>
+				<key>Font</key>
+				<string>Helvetica</string>
+				<key>Size</key>
+				<real>24</real>
+			</dict>
+			<key>ID</key>
+			<integer>201</integer>
+			<key>Shape</key>
+			<string>Rectangle</string>
+			<key>Style</key>
+			<dict>
+				<key>fill</key>
+				<dict>
+					<key>Draws</key>
+					<string>NO</string>
+				</dict>
+				<key>shadow</key>
+				<dict>
+					<key>Draws</key>
+					<string>NO</string>
+				</dict>
+				<key>stroke</key>
+				<dict>
+					<key>Draws</key>
+					<string>NO</string>
+				</dict>
+			</dict>
+			<key>Text</key>
+			<dict>
+				<key>Align</key>
+				<integer>0</integer>
+				<key>Text</key>
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
+
+\f0\fs20 \cf0 Plug Into A \
+USB Port}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
@@ -348,7 +405,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{434.00000403362662, 228.28005453993742}, {29, 12}}</string>
+			<string>{{431.5, 327.34255981445312}, {77, 24}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FitText</key>
@@ -394,7 +451,8 @@
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720
 
-\f0\fs20 \cf0 ~1K}</string>
+\f0\fs20 \cf0 Normally Open\
+Push Button}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>
@@ -1625,7 +1683,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2013-10-31 15:47:34 +0000</string>
+	<string>2013-11-01 04:10:09 +0000</string>
 	<key>Modifier</key>
 	<string>Tal Dayan</string>
 	<key>NotesVisible</key>
@@ -1705,8 +1763,6 @@
 				<string>Canvas 1</string>
 			</dict>
 		</array>
-		<key>FitInWindow</key>
-		<true/>
 		<key>Frame</key>
 		<string>{{107, 4}, {1135, 742}}</string>
 		<key>ListView</key>
@@ -1722,15 +1778,15 @@
 		<key>SidebarWidth</key>
 		<integer>120</integer>
 		<key>VisibleRegion</key>
-		<string>{{-320, 0}, {1215.5886936129198, 732.99998224859064}}</string>
+		<string>{{37.5, 144.5}, {500, 301.5}}</string>
 		<key>Zoom</key>
-		<real>0.82264667749404907</real>
+		<real>2</real>
 		<key>ZoomValues</key>
 		<array>
 			<array>
 				<string>Canvas 1</string>
-				<real>0.0</real>
 				<real>2</real>
+				<real>0.0</real>
 			</array>
 		</array>
 	</dict>
