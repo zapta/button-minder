@@ -14,8 +14,9 @@ Digispark version of Arduino IDE. For more details see:
 
 ---
 
-To program a compiled release on this site using a Mac OSX computer:
+To program a compiled release (a .hex file) from this repository do:
 
+[For Mac OSX]
 1. Copy this repository to your computer (use git, download and 
    unzip, etc) 
 2. Do not insert your Digispark to the comptuer yet.
@@ -33,6 +34,13 @@ To program a compiled release on this site using a Mac OSX computer:
    is completed. 
 6. Remove the Digispark from the computer. Your Digispark is now
    programmed with Button Minder.
+
+[For Windows]
+Do the above with the following exceptions:
+a. Install the Digispark drivers by unzipping the file
+   tools/windows/digispark_windows_driver.zip and running installDriver.ext. 
+b. Use the ../tools/windows/micronucleus.exe
+
 
 An alternative way for programming the Digispark is to setup 
 a Digispark Arduino IDE, load the source code from the 'project'
