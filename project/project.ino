@@ -43,11 +43,8 @@
 #include "io_button.h"
 #include "debouncer.h"
 #include "eeprom_settings.h"
-#include "led_pattern.h"
+#include "diagnostics_led.h"
 #include "passive_timer.h"
-
-// Digispark onboard LED. Used for diagnostics, active high.
-static const int LED_PIN = 1;
 
 // The time in millis for determining a long target button press. This is the long
 // press that toggle the setting of this board.
@@ -65,6 +62,9 @@ static IoButton io_button(2, 1, 100);
 // on time_in_state and this pattern; The led pattern define the led on/off states
 // over 32 time slot of one second cycles. See led_pattern.h for more details.
 static unsigned long led_pattern;
+
+// Diagnostics LED is at digital pin 1.
+static DiagnosticsLed diagnostics_led(1);
 
 // The program is modeled as a finite state machine with these states.
 typedef enum {
@@ -147,7 +147,7 @@ void StateIsLongPress::handle() {
       return;
     }  
     // Keep waiting for stablizaton;
-    digitalWrite(LED_PIN, ledPattern(t, 0x00010001)); 
+    led_pattern = 0x00010001; 
     return;
   }
 
@@ -218,7 +218,6 @@ void StatePressTargetButton::handle() {
 
 // --- IDLE state handler implementation
 
-//struct StateIdle {
 void StateIdle::enter() {
   io_button.setModeInput();
   enterState(STATE_IDLE); 
@@ -243,8 +242,6 @@ void StateFatalError::handle() {
 // --- Main
 
 void setup() { 
-  pinMode(LED_PIN, OUTPUT); 
-  digitalWrite(LED_PIN, LOW);
   io_button.setModeInput();
   state_is_long_press.enter();
 }
@@ -253,9 +250,8 @@ void loop() {
   // If button is in input mode, read its state and update its debouncer.
   io_button.updateDebouncer();
 
-  // Update diagnostic based on pattern and time.
-  digitalWrite(LED_PIN, 
-  ledPattern(time_in_state.time_millis(), led_pattern) ? HIGH : LOW);
+  // Update diagnostic based on pattern and time in state.
+  diagnostics_led.setForPattern(time_in_state.time_millis(), led_pattern);
 
   // Service current state.
   switch (current_state) {
