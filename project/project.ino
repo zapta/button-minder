@@ -65,8 +65,8 @@ static const int DEBOUNCING_TIMEOUT = 4000;
 // Pin P2 is pin 2 as digital and pin 1 as analog. Debounce time is 100 milliseconds.
 static IoButton button(2, 1, 100);
 
-// Enable input pin. Long 1000ms debouncing.
-static InPin enable_input(0, 1000);
+// Enable input pin. Debounce time is 250ms.
+static InPin enable_input(0, 250);
 
 // The current led pattern. The actual led value is computed by ledPattern() based
 // on time_in_state and this pattern; The led pattern define the led on/off states
