@@ -21,7 +21,6 @@
 // GND -> GND of target board.
 // +5V -> +5V of target board.
 // P2  -> Target button (must be a 5V pull up button).
-// P0  -> Enable (optional, active high).
 //
 // Operation:
 // ----------
@@ -30,12 +29,6 @@
 // of the Digispark board can be toggled on/off by long pressing the target button
 // while powering the Digispark board. The on/off setting is stored in the 
 // Digispark's EEPROM.
-//
-// In some environment, the on/off state of the target board is not necesarily reflected
-// by the existance of the +5V vcc. In these case, the Enable pin can be used to 
-// indicate the on/off state of the target board. In this case, the button-minder
-// is active active when it has both +5v and Enable pin is high. If not used, the Enable
-// pin can be left unconnected (it has a weak pullup resistor) or be tied to +5V.
 //
 // Notes:
 // -----
@@ -48,7 +41,6 @@
 #include <EEPROM.h>
 
 #include "io_button.h"
-#include "in_pin.h"
 #include "debouncer.h"
 #include "eeprom_settings.h"
 #include "diagnostics_led.h"
@@ -60,13 +52,21 @@ static const int BUTTON_LONG_PRESS_MILLIS = 5000;
 
 // If the button or the enable input debouncing does not stabalize in this time
 // period than enter the fatal error state. Something must be wrong.
-static const int DEBOUNCING_TIMEOUT = 4000;
+static const int BUTTON_DEBOUNCING_TIMEOUT = 4000;
+
+// Delay in millis before pressing the button. This is an arbitrary value to provide
+// seperation in the diagnostic LED pulses.
+static const int BUTTON_PRE_PRESS_DELAY = 600;
+
+// Time in millis for pressing the button.
+static const int BUTTON_PRESS_DELAY = 300;
+
+// Delay in millis after pressing the button. This is an arbitrary value to provide
+// seperation in the diagnostic LED pulses.
+static const int BUTTON_POST_PRESS_DELAY = 1100;
 
 // Pin P2 is pin 2 as digital and pin 1 as analog. Debounce time is 100 milliseconds.
 static IoButton button(2, 1, 100);
-
-// Enable input pin. Debounce time is 250ms.
-static InPin enable_input(0, 250);
 
 // The current led pattern. The actual led value is computed by ledPattern() based
 // on time_in_state and this pattern; The led pattern define the led on/off states
@@ -86,12 +86,8 @@ typedef enum {
   // Press target button by issuing a open collector pulse. Transitions to 
   // STATE_IDLE.
   STATE_PRESS_TARGET_BUTTON,
-  // Stable state when enable is on. Does nothing. Transition to IDLE off 
-  // when enable goes to false.
-  STATE_IDLE_ON,
-  // Stable state when enable is off. Does nothing. Transition to STATE_IS_LONG_PRESS
-  // when enable goes to true. 
-  STATE_IDLE_OFF,
+  // Stable state after doing the initial operation. Does nothing.
+  STATE_IDLE,
   // If an error occured, the device stays in this passive state until turned off.
   // It issue fast bursts of LED pulses to indicate the error state.
   STATE_FATAL_ERROR
@@ -131,17 +127,11 @@ struct StatePressTargetButton {
 } 
 state_press_target_button;
 
-struct StateIdleOn {
+struct StateIdle {
   void enter();
   void handle();
 } 
-state_idle_on;
-
-struct StateIdleOff {
-  void enter();
-  void handle();
-} 
-state_idle_off;
+state_idle;
 
 struct StateFatalError {
   void enter();
@@ -160,9 +150,9 @@ void StateIsLongPress::enter() {
 void StateIsLongPress::handle() {
   const int t = time_in_current_state.time_millis();
 
-  // Handle the case were input decouncing has not stabalized yet.
-  if (!button.hasStableValue() || !enable_input.hasStableValue()) {
-    if (t > DEBOUNCING_TIMEOUT) {
+  // Handle the case were button decouncing has not stabalized yet.
+  if (!button.hasStableValue()) {
+    if (t > BUTTON_DEBOUNCING_TIMEOUT) {
       state_fatal_error.enter();
       return;
     }  
@@ -171,21 +161,17 @@ void StateIsLongPress::handle() {
     return;
   }
 
-  // Here, when both enable and button input are stable.
-  
-  // If not enabled, go to idle-off state.
-  if (!enable_input.stableValue()) {
-    state_idle_off.enter();
-    return;
-  }
+  // Here, when button debouncer has a value.
 
-  // If the button is released then  then we can transition to the next state.
+  // If the button is released then then no long press, we can transition.
   if (!button.stableValue()) {
     if (EepromSettings::read()) {
+      // Go press the button.
       state_press_target_button.enter();
     } 
     else {
-      state_idle_on.enter();
+      // No need to press the button.
+      state_idle.enter();
     }
     return;
   }
@@ -219,12 +205,14 @@ void StatePressTargetButton::enter() {
 void StatePressTargetButton::handle() {
   const int t = time_in_current_state.time_millis();
 
-  // TODO: make these numbers consts.
-  //
+  const int t1 = BUTTON_PRE_PRESS_DELAY;
+  const int t2 = t1 + BUTTON_PRESS_DELAY;
+  const int t3 = t2 + BUTTON_POST_PRESS_DELAY;
+
   // We simulate a 300ms button press, starting 600ms after 
   // entering this state to make it easier to notice it on
   // the diagnostics LED>
-  if (t >= 600 && t <= 900) { 
+  if (t > t1 && t < t2) { 
     // This 'presses' the target button.
     button.setModeOutputLow();
     led_pattern = 0xffffffff;
@@ -237,41 +225,21 @@ void StatePressTargetButton::handle() {
 
   // Exit the state after 2sec. We could exit eariler but this make the
   // diagnostics LED easier to understand.
-  if (t > 2000) {
-    state_idle_on.enter();
+  if (t > t3) {
+    state_idle.enter();
   }
 }
 
 // --- IDLE ON state handler implementation
 
-void StateIdleOn::enter() {
+void StateIdle::enter() {
   button.setModeInput();
-  enterState(STATE_IDLE_ON); 
+  enterState(STATE_IDLE); 
   led_pattern = 0x00000001; 
 }
 
-void StateIdleOn::handle() {
-  // Enable input became false.
-  if (!enable_input.stableValue()) {
-    state_idle_off.enter();
-  }
+void StateIdle::handle() {
 }
-
-// --- IDLE OFF state handler implementation
-
-void StateIdleOff::enter() {
-  button.setModeInput();
-  enterState(STATE_IDLE_OFF); 
-  led_pattern = 0x0000000f; 
-}
-
-void StateIdleOff::handle() {
-  // Enable input became true. Restart.
-  if (enable_input.stableValue()) {
-    state_is_long_press.enter();
-  }
-}
-
 
 // --- FATAL_ERROR state handler implementation
 
@@ -294,10 +262,7 @@ void setup() {
 void loop() {
   // If button is in input mode, read its state and update its debouncer.
   button.updateDebouncer();
-  
-  // Read and update enable input.
-  enable_input.updateDebouncer();
-  
+
   // Update diagnostic based on pattern and time in state.
   diagnostics_led.setForPattern(time_in_current_state.time_millis(), led_pattern);
 
@@ -309,11 +274,8 @@ void loop() {
   case STATE_PRESS_TARGET_BUTTON:
     state_press_target_button.handle();
     break;
-  case STATE_IDLE_ON:
-    state_idle_on.handle();
-    break;
-  case STATE_IDLE_OFF:
-    state_idle_off.handle();
+  case STATE_IDLE:
+    state_idle.handle();
     break;
   case STATE_FATAL_ERROR:
     state_fatal_error.handle();
@@ -323,4 +285,5 @@ void loop() {
     break;
   }   
 }
+
 
