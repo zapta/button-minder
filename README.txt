@@ -24,7 +24,7 @@ To program a compiled release (a .hex file) from this repository do:
    of this repository.
 4. Identify the compiled release hex file you want to program
 5. Type a command like
-   ../tools/mac_osx/micronucleus button-minder-20131031-001-beta.hex
+   ../tools/mac_osx/micronucleus button-minder-20131110-release-001.hex 
    where the second part is the name of the hex file you want to
    program.
 4. When prompted, insert the Digispark to one of the your computer's 
